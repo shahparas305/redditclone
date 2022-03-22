@@ -4,33 +4,58 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
     <title>test</title>
 </head>
 <body>
 
-    <input type="text" placeholder="Search subreddits..." class="search">
-
-    <div class="filter__container">
-        <div class="filter__hot" onClick="setFilter(1)">Hot</div>
-        <div class="filter__new" onClick="setFilter(2)">New</div>
-        <div class="filter__rising" onClick="setFilter(3)">Rising</div>
-        <div class="filter__controversial" onClick="setFilter(4)">Controversial</div>
-        <div class="filter__top" onClick="setFilter(5)">Top</div>
-    </div>
-
-    <div class="container">
-        <div class="posts">      
-        </div>
-    </div>  
-
-    <div class="modal-container" id="modal_container">
-        <div class="modal">
-            <button id="close" class="close">Close me</button>
-            <div class="comments_post_content"></div>
-            <div class="comments_container"></div>
+    <div class="nav">
+        <div class="logo">Logo</div>
+        <div class="search__container">
+            <input type="search" placeholder="Search subreddits..." class="search">
         </div>
     </div>
+
+    <section class="main">
+        <div class="wrapper">
+        <section class="content__left">
+            <div class="filter">
+                <div class="filter__options">
+                    <div class="filter__hot" onClick="setFilter(1)">Hot</div>
+                    <div class="filter__new" onClick="setFilter(2)">New</div>
+                    <div class="filter__rising" onClick="setFilter(3)">Rising</div>
+                    <div class="filter__controversial" onClick="setFilter(4)">Controversial</div>
+                    <div class="filter__top" onClick="setFilter(5)">Top</div>
+                </div>
+            </div>
+
+            <div class="post__container">
+                <div class="posts"></div>
+            </div>  
+
+            <div class="modal-container" id="modal_container">
+                <div class="modal">
+                    <div class="comments_post_content"></div>
+                    <div class="comments_container"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content__right">
+            <div class="subreddit__container">
+                <div class="subreddit__title">r/ravens</div>
+            </div>
+            <div class="about">
+                <div class="about__title">About</div>
+                <div class="about__text">This is a Reddit clone created by Paras Shah. Design inspired by Prozilla.</div>
+            </div>
+            <div class="options">
+                <div class="options__title">Options</div>
+            </div>
+        </section>
+        </div>
+    </section>
     
     <script src="script.js"></script>
 </body>
