@@ -2,13 +2,22 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* font-family: 'Circular Std Book', sans-serif; */
+    font-family: 'Circular Std Book', sans-serif;
     background-color: black;
     color: white;
     scrollbar-gutter: stable both-edges;
-    font-family: sans-serif !important;
-    
 }
+
+html {
+    overflow: -moz-scrollbars-vertical; 
+    overflow-y: scroll;
+}
+
+@font-face {
+    font-family: "Circular Std Bold";
+    src: url('CircularStd-Bold.otf') format("opentype");   
+}
+
 
 @font-face {
     font-family: "Circular Std Book";
@@ -50,39 +59,59 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 
 .nav {
     top: 0;
-    position:fixed;
+    position: fixed;
     width: 100%;
     height: 50px;
     background-color: #191919;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding-left: 20px;
+    padding-right: 50px;
+}
+
+.logo__container {
+    display: flex;
+    align-items: center;
 }
 
 .logo {
+    height: 32px;
+    width: 32px;
+}
+
+.logo__text {
     color: white;
-    padding-left: 100px;
-    position: absolute;
+    padding-left: 13px;
+    padding-top: 5px;
+    font-size: 21px;
+    font-family: 'Circular Std Bold', sans-serif;
 }
 
 .search__container {
-    width: 100%;
+    width: 50%;
+    background-color: black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 20px;
+    overflow: hidden;
+    padding-left: 15px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    position: relative;
 }
 
-
 .search {
-    background-color: black;
     color: white;
     border: none;
-    position: absolute;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    width: 45%;
-    z-index: 5;
-    border-radius: 20px;
+    background-color: black;
+    caret-color: white;
+    flex: 1;
+}
+
+.search, select {
+    font-size: 17.5px;
+    letter-spacing: .3px;
+    padding-left: 10px;
 }
 
 .search:focus {
@@ -91,8 +120,32 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 }
 
 .search::placeholder {
-    color: #7b7b7b;
-    padding-left: 35px;
+    color: #7f7f7f;
+    font-size: 16px;
+    font-family: 'Circular Std Book', sans-serif;
+}
+
+.nav__bars {
+    display: none;
+}
+
+.dummycontainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: -50px;
+}
+
+.dummysection {
+    width: 700px;
+    background-color: white;
+    color: black;
+    z-index: 10;
+    position: absolute;
+}
+
+.dummyhide {
+    display: none;
 }
 
 .main {
@@ -119,14 +172,45 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .filter__options {
     display: flex;
     justify-content: space-between;
-    padding-top: 50px;
     background-color: #191919;
     color: white;
-    border-radius: 10px;
-    padding: 23px;
+    border-radius: 16px;
+    padding: 17.5px;
     padding-left: 75px;
     padding-right: 75px;
     font-size: 18px;
+    /* overflow-x: scroll;
+    scrollbar-width: none; */
+}
+
+.filter--c {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 5px;
+    padding-top: 8px;
+    padding-left: 12px;
+    border-radius: 30px;
+    transition: 200ms ease-in-out;
+}
+
+.filter__top--c {
+    padding-right: 8px;
+    padding-left: 8px;
+}
+
+.filter--c:hover {
+    background-color: black;
+}
+
+.filter__active {
+    background-color: black;
+}
+
+.filter__icon {
+    font-size: 14px;
+    padding-right: 5px;
 }
 
 .filter__hot, 
@@ -144,7 +228,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .post {
     background-color: #191919;
     color: white;
-    border-radius: 10px;
+    border-radius: 16px;
     margin-bottom: 30px;
     padding: 30px;
 }
@@ -195,15 +279,12 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     text-decoration: none;
     color: white;
     font-size: 20px;
+    cursor: pointer;
 }
 
 .comments:visited, .comments:hover {
     color: white;
     text-decoration: none;
-}
-
-* {
-    box-sizing: border-box;
 }
 
 .modal-container {
@@ -231,8 +312,8 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     background-color: #191919;
     /* MAX WIDTH NOT WORKING  */
     width: 70%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+    border-radius: 16px;
     /* padding: 30px 50px; */
     max-width: 100%;
     text-align: center;
@@ -253,9 +334,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .post__comments {
     background-color: #191919;
     color: white;
-    /* border-radius: 10px;
-    margin-bottom: 30px;
-    padding: 30px; */
+    padding: 25px;
 }
 
 .post__comments__header {
@@ -265,10 +344,21 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 
 .post__comments__title {
     text-align: left;
+    padding-top: 20px;
+}
+
+.post__media {
+    padding-top: 20px;
+    text-align: left;
+}
+
+.null1 {
+    display: none;
 }
 
 .post__comments__info {
     display: flex;
+    color: grey;
 }
 
 .post__comments__icon, .post__comments__subreddit {
@@ -298,7 +388,6 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 }
 
 .comments__text {
-    padding-left: 27px;
     padding-top: 10px;
 }
 
@@ -307,7 +396,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .subreddit__container {
     background-color: #191919;
     color: white;
-    border-radius: 10px;
+    border-radius: 16px;
     margin-bottom: 30px;
     padding: 30px;
 }
@@ -315,7 +404,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .about {
     background-color: #191919;
     color: white;
-    border-radius: 10px;
+    border-radius: 16px;
     margin-bottom: 30px;
     padding: 30px;
 }
@@ -323,7 +412,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .options {
     background-color: #191919;
     color: white;
-    border-radius: 10px;
+    border-radius: 16px;
     margin-bottom: 30px;
     padding: 30px;
 }
@@ -355,6 +444,10 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
         max-width: 70%;
         margin: 0;
         padding: 0;
+    }
+
+    .modal {
+        width: 90%;
     }
 }
 
