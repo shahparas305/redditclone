@@ -13,11 +13,14 @@ const comments_post_content = document.querySelector('.comments_post_content')
 const comments_container = document.querySelector('.comments_container')
 const dummycontainer = document.querySelector('.dummycontainer')
 const dummysection = document.querySelector('.dummysection')
-let subreddit
-let postsArray = []
-let postDataForComments = []
-let comments = []
 let filter = ''
+let subreddit
+let ireddit
+let vreddit
+let streamVideo
+let gallery
+let postsArray = []
+let comments = []
 
 const array = ['ravens', 'nfl', 'wallstreetbets', 'webdev', 'popular', 'all']
 
@@ -87,10 +90,51 @@ const removeActiveFilter = () => {
 const getPosts = () => {
     if(!subreddit) subreddit = 'ravens'
 
-    fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/r/${subreddit}/${filter}.json`)
+    fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/r/${subreddit}/${filter}.json?raw_json=1`)
     .then(res => res.json())
     .then(data => {
         data.data.children.forEach(item => {
+
+            ireddit = ''
+            vreddit = ''
+            youtube = ''
+            gallery = ''
+            if(item.data.domain === 'i.redd.it') {
+                if(item.data.preview !== undefined) {
+                    ireddit = item.data.preview.images
+                }
+            }
+
+            if(item.data.domain === 'v.redd.it') {
+                if(!item.data.crosspost_parent) {
+                    vreddit = item.data.secure_media.reddit_video.fallback_url;
+                } else {
+                    vreddit = item.data.crosspost_parent_list[0].secure_media.reddit_video.fallback_url
+                }
+            }
+
+            if(item.data.domain === 'youtube.com' || item.data.domain === 'streamable.com') {
+                streamVideo = item.data.secure_media_embed.content
+            }
+
+            if(item.data.is_gallery) {
+                gallery = item.data.media_metadata               
+            }
+
+            //For single images, you do not need responsive images. Prozilla uses the same image on desktop and mobile. 
+            //its just the media container changing size
+            //So for the gallery, you'll only need one size 
+            //Gallery you need to some how sort through 4 different objects to get to one image. Maybe a For In loop would be necessary 
+            
+
+            //For v.redd.it, you can get the fallback URL
+            //add audio seperately, and add custom controls 
+
+            //Link is just the URL
+
+            //You can get streamables, it gives an iframe, you'll need to add in the <> and remove slashes in the iframe, but it works well 
+            //Youtube is the same, an iframe just need to fix it up
+
             postsArray.push({
                 "title": item.data.title,
                 "author": item.data.author,
@@ -98,26 +142,42 @@ const getPosts = () => {
                 "comments": item.data.num_comments,
                 "stickied": item.data.stickied,
                 "is_self": item.data.is_self,
-                "selftext": item.data.selftext,
+                "selftext": item.data.selftext_html,
                 "permalink":item.data.permalink,
                 "domain": item.data.domain,
                 "image": item.data.url,
                 "thumbnail": item.data.thumbnail,
+                "subreddit": item.data.subreddit,
+                "rimage": ireddit,
+                "video": vreddit,
+                "streamVideo": streamVideo,
+                "gallery": gallery,
             })
         });
 
-        postsArray.forEach((item) => {
+        postsArray.forEach((item, index) => {
+
+            const postMedia = () => {
+                if(item.is_self) return item.selftext
+                else if(item.domain === 'i.redd.it' || item.domain === 'i.imgur.com') return `<img class='image' src='${item.image}'>`
+                else if(item.domain === 'v.redd.it') 
+                    return `<video width="320" height="240" controls>
+                                <source src="${item.video}" type="video/mp4">
+                            </video>`
+                else if(item.domain === 'youtube.com' || item.domain === 'streamable.com') return item.streamVideo
+                else if(!item.thumbnail || item.thumbnail === 'default') return `<div class="displaynone"></div>`
+                else if(item.domain !== 'i.redd.it' && item.domain !== 'v.redd.it' && item.is_self === false) 
+                    return `<img class='media' src='${item.thumbnail}'>`
+            }
+
             posts.insertAdjacentHTML('beforeend', 
                 `<div class="post">
                     <div class="author ${(item.stickied) ? 'stickied' : ''}">submitted by ${item.author}</div>
                     <div class="title">${item.title}</div>
-                    ${item.is_self ? `<div class="selftext">${item.selftext}</div>`: ''}
-                    ${item.domain === 'i.redd.it' ? `<img class='image' src='${item.image}'>` : ''}
-                    ${item.domain === 'v.redd.it' ? `<img class='media' src='${item.thumbnail}'>` : ''}
-                    ${item.domain !== 'i.redd.it' && item.domain !== 'v.redd.it' && item.is_self === false ? `<img class='media' src='${item.thumbnail}'>`: ''}
+                    ${postMedia()}
                     <div class="stats-con">
                         <div class="upvotes">${item.upvotes} upvotes</div>
-                        <a class="comments__num" onClick="makeModal('${item.permalink}')">${item.comments} comments</a>
+                        <a class="comments__num" onClick="makeModal('${item.permalink}', ${index})">${item.comments} comments</a>
                     </div>
                 </div>`
             )
@@ -125,27 +185,15 @@ const getPosts = () => {
     })
 }
 
-const makeModal = (permalink) => {
+//to get postsData for comments, you would pass the index in the comments OnClick of postarrays
+
+const makeModal = (permalink, index) => {
     modal_container.classList.add('show')
     document.body.style.overflow = "hidden";
 
     fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/${permalink}.json`)
         .then(res => res.json())
         .then(data => {
-            postDataForComments.push({
-                "title": data[0].data.children[0].data.title,
-                "author": data[0].data.children[0].data.author,
-                "upvotes": data[0].data.children[0].data.ups,
-                "comments": data[0].data.children[0].data.num_comments,
-                "stickied": data[0].data.children[0].data.stickied,
-                "is_self": data[0].data.children[0].data.is_self,
-                "selftext": data[0].data.children[0].data.selftext,
-                "permalink": data[0].data.children[0].data.permalink,
-                "image": data[0].data.children[0].data.url,
-                "thumbnail": data[0].data.children[0].data.thumbnail,
-                "domain": data[0].data.children[0].data.domain,
-                "subreddit": data[0].data.children[0].data.subreddit
-            })
 
             data[1].data.children.forEach(item => {
                 comments.push({
@@ -156,25 +204,35 @@ const makeModal = (permalink) => {
                 })
             })
 
+            const commentsPostMedia = () => {
+                if(postsArray[index].is_self) return postsArray[index].selftext
+                else if(postsArray[index].domain === 'i.redd.it' || postsArray[index].domain === 'i.imgur.com') return `<img class='image' src='${postsArray[index].image}'>`
+                else if(postsArray[index].domain === 'v.redd.it') 
+                    return `<video width="320" height="240" controls>
+                                <source src="${postsArray[index].video}" type="video/mp4">
+                            </video>`
+                else if(postsArray[index].domain === 'youtube.com' || postsArray[index].domain === 'streamable.com') return postsArray[index].streamVideo
+                else if(!postsArray[index].thumbnail || postsArray[index].thumbnail === 'default') return `<div class="displaynone"></div>`
+                else if(postsArray[index].domain !== 'i.redd.it' && postsArray[index].domain !== 'v.redd.it' && postsArray[index].is_self === false) 
+                    return `<img class='media' src='${postsArray[index].thumbnail}'>`
+            }
+
             comments_post_content.insertAdjacentHTML('beforeend', 
                 `<div class="post__comments">
                     <div class="post__comments__header">
                         <div class="post__comments__info">
-                            <div class="post__comments__subreddit">r/${postDataForComments[0].subreddit}</div>
-                            <div class="post__comments__author">Posted by ${postDataForComments[0].author}</div>
+                            <div class="post__comments__subreddit">r/${postsArray[index].subreddit}</div>
+                            <div class="post__comments__author">Posted by ${postsArray[index].author}</div>
                         </div>
                         <button id="close" class="close">Close me</button>
                     </div>
-                    <h1 class="post__comments__title">${postDataForComments[0].title}</h1>
+                    <h1 class="post__comments__title">${postsArray[index].title}</h1>
                     <div class="post__media">
-                        ${postDataForComments[0].is_self ? `<div class="selftext">${postDataForComments[0].selftext}</div>`: ''}
-                        ${postDataForComments[0].domain === 'i.redd.it' ? `<img class='image' src='${postDataForComments[0].image}'>` : ''}
-                        ${postDataForComments[0].domain === 'v.redd.it' ? `<img class='media' src='${postDataForComments[0].thumbnail}'>` : ''}
-                        ${postDataForComments[0].domain !== 'i.redd.it' && postDataForComments[0].domain !== 'v.redd.it' && postDataForComments[0].is_self === false ? `<img class='media' src='${postDataForComments[0].thumbnail}'>`: ''}
+                       ${commentsPostMedia()}
                     </div>
                     <div class="stats-con">
-                        <div class="upvotes">&hearts; ${postDataForComments[0].upvotes}</div>
-                        <a class="comments">&hardcy; ${postDataForComments[0].comments}</a>
+                        <div class="upvotes">&hearts; ${postsArray[index].upvotes}</div>
+                        <a class="comments">&hardcy; ${postsArray[index].comments}</a>
                     </div>
                 </div>`
             )
