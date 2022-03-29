@@ -4,17 +4,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
     <title>test</title>
 </head>
 <body>
 
     <div class="nav">
-        <div class="logo">Logo</div>
+        <div class="logo__container">
+            <img class="logo" src="logo.svg">
+            <div class="logo__text">Nexilis</div>
+        </div>   
         <div class="search__container">
-            <input type="search" placeholder="Search subreddits..." class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" placeholder="Search Nexilis" class="search">
         </div>
+        <div class="nav__bars__container">
+            <i class="fa-solid fa-bars nav__bars"></i>
+        </div>
+    </div>
+
+    <div class="dummycontainer dummyhide">
+        <div class="dummysection"></div>
     </div>
 
     <section class="main">
@@ -22,11 +33,26 @@
         <section class="content__left">
             <div class="filter">
                 <div class="filter__options">
-                    <div class="filter__hot" onClick="setFilter(1)">Hot</div>
-                    <div class="filter__new" onClick="setFilter(2)">New</div>
-                    <div class="filter__rising" onClick="setFilter(3)">Rising</div>
-                    <div class="filter__controversial" onClick="setFilter(4)">Controversial</div>
-                    <div class="filter__top" onClick="setFilter(5)">Top</div>
+                    <div class="filter__hot--c filter--c filter__active" onClick="setFilter(1)">
+                        <i class="fas fa-fire filter__icon"></i>
+                        <div class="filter__hot">Hot</div>
+                    </div>
+                    <div class="filter__new--c filter--c" onClick="setFilter(2)">
+                        <i class="fas fa-certificate filter__icon"></i>
+                        <div class="filter__new">New</div>
+                    </div>
+                    <div class="filter__rising--c filter--c" onClick="setFilter(3)">
+                        <i class="fas fa-chart-line filter__icon"></i>
+                        <div class="filter__rising">Rising</div>
+                    </div>
+                    <div class="filter__controversial--c filter--c" onClick="setFilter(4)">
+                        <i class="fas fa-bullhorn filter__icon"></i>
+                        <div class="filter__controversial">Controversial</div>
+                    </div>
+                    <div class="filter__top--c filter--c" onClick="setFilter(5)">
+                        <i class="fas fa-trophy filter__icon"></i>
+                        <div class="filter__top">Top</div>
+                    </div>
                 </div>
             </div>
 
@@ -56,7 +82,8 @@
         </section>
         </div>
     </section>
-    
+
+    <script type="text/javascript" src="data.json"></script>
     <script src="script.js"></script>
 </body>
 </html>
