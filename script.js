@@ -101,6 +101,7 @@ const getPosts = () => {
             vreddit = ''
             youtube = ''
             gallery = ''
+            vthumb = ''
             if(item.data.domain === 'i.redd.it') {
                 if(item.data.preview !== undefined) {
                     ireddit = item.data.preview.images
@@ -110,14 +111,17 @@ const getPosts = () => {
             if(item.data.domain === 'v.redd.it') {
                 if(!item.data.crosspost_parent && item.data.secure_media != null) {
                     vreddit = item.data.secure_media.reddit_video.fallback_url;
-                    vthumb = item.data.preview.images[0].source.url
+                    if(item.data.preview != null) {
+                        vthumb = item.data.preview.images[0].source.url
+                    }
                 } else {
                     vreddit = item.data.crosspost_parent_list[0].secure_media.reddit_video.fallback_url
                 }
-            }//preview.images[0].source.url
+            }
 
             if(item.data.domain === 'youtube.com' || item.data.domain === 'streamable.com' || item.data.domain === 'gfycat.com') {
                 streamVideo = item.data.secure_media_embed.content
+                // streamVideo = streamVideo.replace('width="356" height="200"', '')
             }
 
             if(item.data.is_gallery) {
@@ -158,11 +162,13 @@ const getPosts = () => {
                 "vthumb": vthumb
             })
         });
+        
+        console.log(postsArray)
 
         postsArray.forEach((item, index) => {
 
             const postMedia = () => {
-                if(item.is_self) return `<div class="post__media2">${item.selftext}</div>`
+                if(item.is_self) return `<div class="post__media2" id="selftext">${item.selftext}</div>`
                 else if(item.domain === 'i.redd.it' || item.domain === 'i.imgur.com') return `<img class='post__media2' src='${item.image}'>`
                 else if(item.domain === 'v.redd.it') 
                     return `<video class="post__media2" poster="${item.vthumb}" controls>
@@ -213,16 +219,29 @@ const makeModal = (permalink, index) => {
                 })
             })
 
+            //BEGIN
+
             const commentsPostMedia = () => {
-                if(postsArray[index].is_self) return `<div class="post__media2 selftext">${postsArray[index].selftext}</div>`
-                else if(postsArray[index].domain === 'i.redd.it' || postsArray[index].domain === 'i.imgur.com') return `<img class='post__media2' src='${postsArray[index].image}'>`
+                if(postsArray[index].is_self) 
+                    return `<div class="post__media">${postsArray[index].selftext}</div>`
+                else if(postsArray[index].domain === 'i.redd.it' || postsArray[index].domain === 'i.imgur.com') 
+                    return `<div class="post__media__container">
+                                <div class=""post__media__inner__container>
+                                    <img class='post__media2' src='${postsArray[index].image}'>
+                                </div>
+                            </div>`
                 else if(postsArray[index].domain == 'v.redd.it') 
-                    return `<video class="post__media2" poster="${postsArray[index].vthumb}" controls>
-                                <source src="${postsArray[index].video}" type="video/mp4">
-                            </video>`
-                else if(postsArray[index].domain === 'youtube.com' || postsArray[index].domain === 'streamable.com') return postsArray[index].streamVideo
+                    return `<div class="post__media__container">
+                                <div class=""post__media__inner__container>
+                                    <video class="post__media2" poster="${postsArray[index].vthumb}" controls>
+                                        <source src="${postsArray[index].video}" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>`
+                else if(postsArray[index].domain === 'youtube.com' || postsArray[index].domain === 'streamable.com') 
+                    return postsArray[index].streamVideo
                 else if(postsArray[index].domain !== 'i.redd.it' && postsArray[index].domain !== 'v.redd.it' && postsArray[index].is_self === false) 
-                    return `<a href="${postsArray[index].image}">${postsArray[index].image}</a>`
+                    return `<a class="selftext" href="${postsArray[index].image}">${postsArray[index].image}</a>`
                 else return `<div class="displaynone"></div>`
             }
 
@@ -236,11 +255,7 @@ const makeModal = (permalink, index) => {
                         <button id="close" class="close">Close me</button>
                     </div>
                     <h1 class="post__comments__title">${postsArray[index].title}</h1>
-                    <div class="post__media__container">
-                        <div class=""post__media__inner__container>      
-                            ${commentsPostMedia()}
-                        </div>
-                    </div>
+                        ${commentsPostMedia()}
                     </div>
                     <div class="stats-con">
                         <div class="upvotes">&hearts; ${postsArray[index].upvotes}</div>
