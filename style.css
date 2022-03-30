@@ -251,7 +251,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .post__media__inner__container {
     position: relative;
 	border-radius: inherit;
-	flex-direction: column;
+	align-items: center;
 }
 
 .post__media2 {
