@@ -17,6 +17,7 @@ let filter = ''
 let subreddit
 let ireddit
 let vreddit
+let vthumb
 let streamVideo
 let gallery
 let postsArray = []
@@ -109,10 +110,11 @@ const getPosts = () => {
             if(item.data.domain === 'v.redd.it') {
                 if(!item.data.crosspost_parent && item.data.secure_media != null) {
                     vreddit = item.data.secure_media.reddit_video.fallback_url;
+                    vthumb = item.data.preview.images[0].source.url
                 } else {
                     vreddit = item.data.crosspost_parent_list[0].secure_media.reddit_video.fallback_url
                 }
-            }
+            }//preview.images[0].source.url
 
             if(item.data.domain === 'youtube.com' || item.data.domain === 'streamable.com' || item.data.domain === 'gfycat.com') {
                 streamVideo = item.data.secure_media_embed.content
@@ -153,6 +155,7 @@ const getPosts = () => {
                 "video": vreddit,
                 "streamVideo": streamVideo,
                 "gallery": gallery,
+                "vthumb": vthumb
             })
         });
 
@@ -162,7 +165,7 @@ const getPosts = () => {
                 if(item.is_self) return `<div class="post__media2">${item.selftext}</div>`
                 else if(item.domain === 'i.redd.it' || item.domain === 'i.imgur.com') return `<img class='post__media2' src='${item.image}'>`
                 else if(item.domain === 'v.redd.it') 
-                    return `<video class="post__media2" controls>
+                    return `<video class="post__media2" poster="${item.vthumb}" controls>
                                 <source src="${item.video}" type="video/mp4">
                             </video>`
                 else if(item.domain === 'youtube.com' || item.domain === 'streamable.com' || item.domain === 'gfycat.com') return `<div class="post__media2">${item.streamVideo}</div>`
