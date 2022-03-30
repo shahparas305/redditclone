@@ -13,6 +13,11 @@ html {
     overflow-y: scroll;
 }
 
+a, a:visited {
+    color: white;
+}
+
+
 @font-face {
     font-family: "Circular Std Bold";
     src: url('CircularStd-Bold.otf') format("opentype");   
@@ -68,6 +73,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     justify-content: space-between;
     padding-left: 20px;
     padding-right: 50px;
+    z-index: 1;
 }
 
 .logo__container {
@@ -231,6 +237,33 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     border-radius: 16px;
     margin-bottom: 30px;
     padding: 30px;
+    overflow: hidden;
+}
+
+.post__media__container {
+    display: flex;
+    justify-content: center;
+	width: 100%;
+	height: auto;
+	max-height: 75vh;
+}
+
+.post__media__inner__container {
+    position: relative;
+	border-radius: inherit;
+}
+
+.post__media2 {
+    max-width: 100%;
+	height: 100%;
+	object-fit: contain;
+	border-radius: inherit;
+	overflow: hidden;
+    max-height: 100vh !important;
+}
+
+.selftext {
+    max-height: 100vh !important;
 }
 
 
@@ -247,19 +280,8 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     margin-bottom: 15px;
 }
 
-.selftext {
-    margin-bottom: 15px;
-    overflow:hidden;
-}
 
-.image {
-    margin-bottom: 15px;
-    max-width:100%;
-    max-height:100%;
-    height: 500px;
-    display: grid;
-    justify-content: center;
-}
+
 
 
 .media {
@@ -301,6 +323,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;
+    z-index: 2;
 }
 
 .modal-container.show {
@@ -391,6 +414,16 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     padding-top: 10px;
 }
 
+.comments__body {
+    color: white;
+    font-size: 16px;
+}
+
+.md > p {
+    color: white;
+    font-size: 16px;
+}
+
 /* CONTENT RIGHT */
 
 .subreddit__container {
@@ -467,4 +500,8 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     .wrapper {
         max-width: 95%;
     }
+}
+
+.displaynone {
+    display: none;
 }
