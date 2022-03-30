@@ -163,7 +163,7 @@ const getPosts = () => {
 
             const postMedia = () => {
                 if(item.is_self) return `<div class="post__media2">${item.selftext}</div>`
-                else if(item.domain === 'i.redd.it' || item.domain === 'i.imgur.com') return `<div><img class='post__media2' src='${item.image}'></div>`
+                else if(item.domain === 'i.redd.it' || item.domain === 'i.imgur.com') return `<img class='post__media2' src='${item.image}'>`
                 else if(item.domain === 'v.redd.it') 
                     return `<video class="post__media2" poster="${item.vthumb}" controls>
                                 <source src="${item.video}" type="video/mp4">
