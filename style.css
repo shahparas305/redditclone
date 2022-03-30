@@ -256,7 +256,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .post__media2 {
     max-width: 100%;
 	height: 100%;
-	object-fit: contain;
+/* 	object-fit: contain; */
 	border-radius: inherit;
 	overflow: hidden;
 	align-self: flex-start;
