@@ -251,7 +251,6 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .post__media__inner__container {
     position: relative;
 	border-radius: inherit;
-	align-items: center;
 }
 
 .post__media2 {
