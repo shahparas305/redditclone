@@ -25,6 +25,7 @@ let comments = []
 const array = ['ravens', 'nfl', 'wallstreetbets', 'webdev', 'popular', 'all']
 
 
+
 search.addEventListener("keyup", function(e) {
     e.preventDefault();
     dummysection.innerHTML = ''
@@ -106,14 +107,14 @@ const getPosts = () => {
             }
 
             if(item.data.domain === 'v.redd.it') {
-                if(!item.data.crosspost_parent) {
+                if(!item.data.crosspost_parent && item.data.secure_media != null) {
                     vreddit = item.data.secure_media.reddit_video.fallback_url;
                 } else {
                     vreddit = item.data.crosspost_parent_list[0].secure_media.reddit_video.fallback_url
                 }
             }
 
-            if(item.data.domain === 'youtube.com' || item.data.domain === 'streamable.com') {
+            if(item.data.domain === 'youtube.com' || item.data.domain === 'streamable.com' || item.data.domain === 'gfycat.com') {
                 streamVideo = item.data.secure_media_embed.content
             }
 
@@ -158,23 +159,28 @@ const getPosts = () => {
         postsArray.forEach((item, index) => {
 
             const postMedia = () => {
-                if(item.is_self) return item.selftext
-                else if(item.domain === 'i.redd.it' || item.domain === 'i.imgur.com') return `<img class='image' src='${item.image}'>`
+                if(item.is_self) return `<div class="post__media2">${item.selftext}</div>`
+                else if(item.domain === 'i.redd.it' || item.domain === 'i.imgur.com') return `<img class='post__media2' src='${item.image}'>`
                 else if(item.domain === 'v.redd.it') 
-                    return `<video width="320" height="240" controls>
+                    return `<video class="post__media2" controls>
                                 <source src="${item.video}" type="video/mp4">
                             </video>`
-                else if(item.domain === 'youtube.com' || item.domain === 'streamable.com') return item.streamVideo
+                else if(item.domain === 'youtube.com' || item.domain === 'streamable.com' || item.domain === 'gfycat.com') return `<div class="post__media2">${item.streamVideo}</div>`
                 else if(!item.thumbnail || item.thumbnail === 'default') return `<div class="displaynone"></div>`
                 else if(item.domain !== 'i.redd.it' && item.domain !== 'v.redd.it' && item.is_self === false) 
-                    return `<img class='media' src='${item.thumbnail}'>`
+                    return `<img class='post__media2' src='${item.thumbnail}'>`
+                else return `<div class="displaynone"></div>`
             }
 
             posts.insertAdjacentHTML('beforeend', 
                 `<div class="post">
                     <div class="author ${(item.stickied) ? 'stickied' : ''}">submitted by ${item.author}</div>
                     <div class="title">${item.title}</div>
-                    ${postMedia()}
+                    <div class="post__media__container">
+                        <div class=""post__media__inner__container>                         
+                            ${postMedia()}                          
+                        </div>
+                    </div>
                     <div class="stats-con">
                         <div class="upvotes">${item.upvotes} upvotes</div>
                         <a class="comments__num" onClick="makeModal('${item.permalink}', ${index})">${item.comments} comments</a>
@@ -191,13 +197,13 @@ const makeModal = (permalink, index) => {
     modal_container.classList.add('show')
     document.body.style.overflow = "hidden";
 
-    fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/${permalink}.json`)
+    fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/${permalink}.json?raw_json=1`)
         .then(res => res.json())
         .then(data => {
 
             data[1].data.children.forEach(item => {
                 comments.push({
-                    "body": item.data.body,
+                    "body": item.data.body_html,
                     "author": item.data.author,
                     "upvotes": item.data.ups,
                     "replies": item.data.replies,                    
@@ -205,16 +211,16 @@ const makeModal = (permalink, index) => {
             })
 
             const commentsPostMedia = () => {
-                if(postsArray[index].is_self) return postsArray[index].selftext
-                else if(postsArray[index].domain === 'i.redd.it' || postsArray[index].domain === 'i.imgur.com') return `<img class='image' src='${postsArray[index].image}'>`
-                else if(postsArray[index].domain === 'v.redd.it') 
-                    return `<video width="320" height="240" controls>
+                if(postsArray[index].is_self) return `<div class="post__media2 selftext">${postsArray[index].selftext}</div>`
+                else if(postsArray[index].domain === 'i.redd.it' || postsArray[index].domain === 'i.imgur.com') return `<img class='post__media2' src='${postsArray[index].image}'>`
+                else if(postsArray[index].domain == 'v.redd.it') 
+                    return `<video class="post__media2" controls>
                                 <source src="${postsArray[index].video}" type="video/mp4">
                             </video>`
                 else if(postsArray[index].domain === 'youtube.com' || postsArray[index].domain === 'streamable.com') return postsArray[index].streamVideo
-                else if(!postsArray[index].thumbnail || postsArray[index].thumbnail === 'default') return `<div class="displaynone"></div>`
                 else if(postsArray[index].domain !== 'i.redd.it' && postsArray[index].domain !== 'v.redd.it' && postsArray[index].is_self === false) 
-                    return `<img class='media' src='${postsArray[index].thumbnail}'>`
+                    return `<a href="${postsArray[index].image}">${postsArray[index].image}</a>`
+                else return `<div class="displaynone"></div>`
             }
 
             comments_post_content.insertAdjacentHTML('beforeend', 
@@ -227,8 +233,11 @@ const makeModal = (permalink, index) => {
                         <button id="close" class="close">Close me</button>
                     </div>
                     <h1 class="post__comments__title">${postsArray[index].title}</h1>
-                    <div class="post__media">
-                       ${commentsPostMedia()}
+                    <div class="post__media__container">
+                        <div class=""post__media__inner__container>      
+                            ${commentsPostMedia()}
+                        </div>
+                    </div>
                     </div>
                     <div class="stats-con">
                         <div class="upvotes">&hearts; ${postsArray[index].upvotes}</div>
@@ -244,7 +253,9 @@ const makeModal = (permalink, index) => {
                         <div class="comments__author">${item.author}</div>
                         <div class="comments__upvotes">${item.upvotes} points</div>
                     </div>
-                    <div class="comments__text">${item.body}</div>
+                    <div class="comments__body">
+                        ${item.body}
+                    </div>
                 </div>`
                 )
             })
