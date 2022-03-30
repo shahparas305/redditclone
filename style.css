@@ -154,6 +154,30 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     display: none;
 }
 
+@media (max-width: 1100px) {
+    .logo__text {
+        display: none;
+    }
+
+    .search__container {
+        flex: 1;
+    }
+
+    .nav {
+        padding-left: 10px;
+    }
+
+    .logo {
+        padding-right: 10px;
+    }
+
+    .nav__bars {
+        display: block;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
 .main {
     margin-top: 70px;
     max-width: 100%;
@@ -226,6 +250,23 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     padding-right: 5px;
 }
 
+@media (max-width: 650px) {
+    .filter__options {
+        padding-left: 10px;
+        padding-right: 0px;
+        overflow-y: scroll;
+        scrollbar-width: 1px;
+        scrollbar-gutter: 2px;
+    }
+
+    ::-webkit-scrollbar-track {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    
+}
+
 .post__container {
     margin-bottom: 100px;
     margin-top: 30px;
@@ -240,9 +281,15 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     overflow: hidden;
 }
 
+.selftext {
+    text-align: left;
+    max-height: 75vh;
+    height: auto;
+}
+
 .post__media__container {
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
 	width: 100%;
 	height: auto;
 	max-height: 75vh;
@@ -256,14 +303,16 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .post__media2 {
     max-width: 100%;
 	height: 100%;
-/* 	object-fit: contain; */
+	/* object-fit: contain; */
 	border-radius: inherit;
 	overflow: hidden;
-	align-self: flex-start;
 }
 
+
 .selftext {
-    max-height: 100vh !important;
+    text-align: left;
+    display: block;
+    justify-content: left;
 }
 
 
@@ -280,10 +329,6 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     margin-bottom: 15px;
 }
 
-
-
-
-
 .media {
     margin-bottom: 15px;
 }
@@ -294,6 +339,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 
 .stats-con {
     display: flex;
+    flex-direction: row;
     font-size: 20px;
 }
 
