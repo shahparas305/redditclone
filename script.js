@@ -217,7 +217,7 @@ const makeModal = (permalink, index) => {
                 if(postsArray[index].is_self) return `<div class="post__media2 selftext">${postsArray[index].selftext}</div>`
                 else if(postsArray[index].domain === 'i.redd.it' || postsArray[index].domain === 'i.imgur.com') return `<img class='post__media2' src='${postsArray[index].image}'>`
                 else if(postsArray[index].domain == 'v.redd.it') 
-                    return `<video class="post__media2" controls>
+                    return `<video class="post__media2" poster="${postsArray[index].vthumb}" controls>
                                 <source src="${postsArray[index].video}" type="video/mp4">
                             </video>`
                 else if(postsArray[index].domain === 'youtube.com' || postsArray[index].domain === 'streamable.com') return postsArray[index].streamVideo
