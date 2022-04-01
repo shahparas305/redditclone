@@ -14,12 +14,14 @@ const comments_container = document.querySelector('.comments_container')
 const dummycontainer = document.querySelector('.dummycontainer')
 const dummysection = document.querySelector('.dummysection')
 let filter = ''
-let subreddit
+let subreddit = 'ravens'
 let ireddit
 let vreddit
 let vthumb
 let streamVideo
 let gallery
+let subredditInfo = []
+let subredditIcon
 let postsArray = []
 let comments = []
 
@@ -48,12 +50,15 @@ search.addEventListener("keyup", function(e) {
     if (e.keyCode === 13) {
         search.blur();
         subreddit = search.value;
+        subredditIcon = ''
+        subredditInfo = []
         postsArray = []
         posts.innerHTML = ''
         filter = ''
         removeActiveFilter()
         dummycontainer.classList.add('dummyhide')
         filterHot.classList.add('filter__active')
+        getSubredditInfo()
         getPosts();
     }
 });
@@ -61,12 +66,15 @@ search.addEventListener("keyup", function(e) {
 const changeSubreddit = (i) => {
     subreddit = i
     search.value = i
+    subredditIcon = ''
+    subredditInfo = []
     postsArray = []
     posts.innerHTML = ''
     filter = ''
     removeActiveFilter()
     dummycontainer.classList.add('dummyhide')
     filterHot.classList.add('filter__active')
+    getSubredditInfo()
     getPosts()
 }
 
@@ -89,9 +97,19 @@ const removeActiveFilter = () => {
       }
 }
 
-const getPosts = () => {
-    if(!subreddit) subreddit = 'ravens'
+const getSubredditInfo = () => {
+    fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/r/${subreddit}/about.json`)
+    .then(res => res.json())
+    .then(data => {
+        subredditIcon = data.data.icon_img
+        subredditInfo.push({
+            "subredditIcon": subredditIcon 
+        })
+        console.log(subredditIcon)
+    })
+}
 
+const getPosts = () => {
     fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/r/${subreddit}/${filter}.json?raw_json=1`)
     .then(res => res.json())
     .then(data => {
@@ -102,11 +120,11 @@ const getPosts = () => {
             youtube = ''
             gallery = ''
             vthumb = ''
-            if(item.data.domain === 'i.redd.it') {
-                if(item.data.preview !== undefined) {
-                    ireddit = item.data.preview.images
-                }
-            }
+            // if(item.data.domain === 'i.redd.it') {
+            //     if(item.data.preview !== undefined) {
+            //         ireddit = item.data.preview.images
+            //     }
+            // }
 
             if(item.data.domain === 'v.redd.it') {
                 if(!item.data.crosspost_parent && item.data.secure_media != null) {
@@ -155,23 +173,23 @@ const getPosts = () => {
                 "image": item.data.url,
                 "thumbnail": item.data.thumbnail,
                 "subreddit": item.data.subreddit,
-                "rimage": ireddit,
+                "flair": item.data.link_flair_text,
+                // "rimage": ireddit,
                 "video": vreddit,
+                "vthumb": vthumb,
                 "streamVideo": streamVideo,
                 "gallery": gallery,
-                "vthumb": vthumb
+                "subredditIcon": subredditIcon,
             })
         });
-        
-        console.log(postsArray)
 
         postsArray.forEach((item, index) => {
 
             const postMedia = () => {
-                if(item.is_self) return `<div class="post__media2" id="selftext">${item.selftext}</div>`
+                if(item.is_self && item.selftext != null) return `<div class="post__media2" id="selftext">${item.selftext}</div>`
                 else if(item.domain === 'i.redd.it' || item.domain === 'i.imgur.com') return `<img class='post__media2' src='${item.image}'>`
                 else if(item.domain === 'v.redd.it') 
-                    return `<video class="post__media2" poster="${item.vthumb}" controls>
+                    return `<video class="post__media2 post__img" poster="${item.vthumb}" controls>
                                 <source src="${item.video}" type="video/mp4">
                             </video>`
                 else if(item.domain === 'youtube.com' || item.domain === 'streamable.com' || item.domain === 'gfycat.com') return `<div class="post__media2">${item.streamVideo}</div>`
@@ -181,9 +199,21 @@ const getPosts = () => {
                 else return `<div class="displaynone"></div>`
             }
 
+            //You can get subreddit icons, banner, subcribers, recently online, etc very easily from ravens/about.json
+            //able to make the side menu and get subreddit icons for the posts 
+            //would need to make another fetch request
+            //wouldn't work for r/all or r/popular 
+        
             posts.insertAdjacentHTML('beforeend', 
                 `<div class="post">
-                    <div class="author ${(item.stickied) ? 'stickied' : ''}">submitted by ${item.author}</div>
+                    <div class="post__topinfo">
+                        <div class="post__topinfo__text">
+                            <img class="post__subreddit__icon" src=${(item.subredditIcon) ? item.subredditIcon : "logo.svg"}>
+                            <div class="post__subreddit">r/${item.subreddit} &middot;</div>
+                            <div class="author"> Posted by u/${item.author}</div>
+                        </div>
+                        <div class="stickied ${(item.stickied ? "stickied__show" : "")}"><i title="Pinned by moderators" class="green fas fa-thumbtack"></i></div>
+                    </div>
                     <div class="title">${item.title}</div>
                     <div class="post__media__container">
                         <div class=""post__media__inner__container>                         
@@ -191,8 +221,8 @@ const getPosts = () => {
                         </div>
                     </div>
                     <div class="stats-con">
-                        <div class="upvotes">${item.upvotes} upvotes</div>
-                        <a class="comments__num" onClick="makeModal('${item.permalink}', ${index})">${item.comments} comments</a>
+                        <div class="upvotes"><i class="far fa-heart"></i> ${item.upvotes}</div>
+                        <a class="comments__num" onClick="makeModal('${item.permalink}', ${index})"><i class="far fa-comment"></i> ${item.comments} comments</a>
                     </div>
                 </div>`
             )
@@ -215,14 +245,15 @@ const makeModal = (permalink, index) => {
                     "body": item.data.body_html,
                     "author": item.data.author,
                     "upvotes": item.data.ups,
-                    "replies": item.data.replies,                    
+                    "replies": item.data.replies, 
+                    "stickied": item.data.stickied                   
                 })
             })
 
             //BEGIN
 
             const commentsPostMedia = () => {
-                if(postsArray[index].is_self) 
+                if(postsArray[index].is_self && postsArray[index].selftext != null) 
                     return `<div class="post__media">${postsArray[index].selftext}</div>`
                 else if(postsArray[index].domain === 'i.redd.it' || postsArray[index].domain === 'i.imgur.com') 
                     return `<div class="post__media__container">
@@ -249,17 +280,17 @@ const makeModal = (permalink, index) => {
                 `<div class="post__comments">
                     <div class="post__comments__header">
                         <div class="post__comments__info">
-                            <div class="post__comments__subreddit">r/${postsArray[index].subreddit}</div>
+                            <img class="post__subreddit__icon" src=${(postsArray[index].subredditIcon) ? postsArray[index].subredditIcon : "logo.svg"}>
+                            <div class="post__comments__subreddit">r/${postsArray[index].subreddit} &middot;</div>
                             <div class="post__comments__author">Posted by ${postsArray[index].author}</div>
                         </div>
-                        <button id="close" class="close">Close me</button>
+                        <i class="fa-solid fa-x close" id="close"></i>
                     </div>
                     <h1 class="post__comments__title">${postsArray[index].title}</h1>
-                        ${commentsPostMedia()}
-                    </div>
-                    <div class="stats-con">
-                        <div class="upvotes">&hearts; ${postsArray[index].upvotes}</div>
-                        <a class="comments">&hardcy; ${postsArray[index].comments}</a>
+                    ${commentsPostMedia()}
+                    <div class="post__stats-con">
+                        <div class="post__upvotes"><i class="far fa-heart"></i> ${postsArray[index].upvotes}</div>
+                        <div class="post__comments__num"><i class="far fa-comment"></i> ${postsArray[index].comments} comments</div>
                     </div>
                 </div>`
             )
@@ -268,6 +299,7 @@ const makeModal = (permalink, index) => {
                 comments_container.insertAdjacentHTML('beforeend',
                 `<div class="comments">
                     <div class="comments__heading">
+                        <img class="comments__icon" src="comment-img${Math.floor(Math.random() * 8) + 1}.jpg">
                         <div class="comments__author">${item.author}</div>
                         <div class="comments__upvotes">${item.upvotes} points</div>
                     </div>
@@ -298,6 +330,7 @@ function closeModal() {
     document.body.style.overflow = "";
 }
 
+getSubredditInfo()
 getPosts()
 
 
