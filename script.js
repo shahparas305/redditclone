@@ -13,6 +13,7 @@ const comments_post_content = document.querySelector('.comments_post_content')
 const comments_container = document.querySelector('.comments_container')
 const dummycontainer = document.querySelector('.dummycontainer')
 const dummysection = document.querySelector('.dummysection')
+const subreddit__title = document.querySelector('.subreddit__title')
 let filter = ''
 let subreddit = 'ravens'
 let ireddit
@@ -38,16 +39,22 @@ search.addEventListener("keyup", function(e) {
     })
     if(searchWord !== '') {
         dummycontainer.classList.remove('dummyhide')
-        newFilter.forEach((i) => {
-            dummysection.insertAdjacentHTML('beforeend', 
-            `<div onClick="changeSubreddit('${i}')">r/${i}</div>`)
-        })
+        // newFilter.forEach((i) => {
+        //     dummysection.insertAdjacentHTML('beforeend', 
+        //     `<div onClick="changeSubreddit('${i}')">r/${i}</div>`)
+        // })
         if(newFilter.length === 0) dummycontainer.classList.add('dummyhide')
     } else {
         dummycontainer.classList.add('dummyhide')
     }
     
     if (e.keyCode === 13) {
+        if(searchWord === 'popular') {
+            subreddit__title.innerHTML = "r/popular"
+        } else if (searchWord === 'all') {
+            subreddit__title.innerHTML = "r/all"
+        }
+
         search.blur();
         subreddit = search.value;
         subredditIcon = ''
@@ -98,22 +105,34 @@ const removeActiveFilter = () => {
 }
 
 const getSubredditInfo = () => {
-    fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/r/${subreddit}/about.json`)
-    .then(res => res.json())
-    .then(data => {
-        subredditIcon = data.data.icon_img
+    const data = axios.get("https://redditclone305.herokuapp.com/subreddit", {
+        params: {
+            subreddit: subreddit,
+        },
+    }).then(res => {
+        subredditIcon = res.data.data.icon_img
         subredditInfo.push({
-            "subredditIcon": subredditIcon 
+            "subredditIcon": subredditIcon,
+            "subredditTitle":  res.data.data.display_name
         })
-        console.log(subredditIcon)
-    })
+
+        subreddit__title.innerHTML = "r/" + subredditInfo[0].subredditTitle
+        
+    }).catch(err => console.error(err));
+
+
+
 }
 
 const getPosts = () => {
-    fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/r/${subreddit}/${filter}.json?raw_json=1`)
-    .then(res => res.json())
-    .then(data => {
-        data.data.children.forEach(item => {
+    const data = axios.get("https://redditclone305.herokuapp.com/posts", {
+        params: {
+            subreddit: subreddit,
+            filter: filter
+        },
+    }).then(res => {
+        console.log(res)
+        res.data.data.children.forEach(item => {
 
             ireddit = ''
             vreddit = ''
@@ -227,7 +246,8 @@ const getPosts = () => {
                 </div>`
             )
         })
-    })
+    }).catch(err => console.error(err));
+    // })
 }
 
 //to get postsData for comments, you would pass the index in the comments OnClick of postarrays
@@ -236,11 +256,13 @@ const makeModal = (permalink, index) => {
     modal_container.classList.add('show')
     document.body.style.overflow = "hidden";
 
-    fetch(`https://cors-anywhere.herokuapp.com/https://reddit.com/${permalink}.json?raw_json=1`)
-        .then(res => res.json())
-        .then(data => {
+    const data = axios.get("https://redditclone305.herokuapp.com/comments", {
+        params: {
+            permalink: permalink,
+        },
+    }).then(res => {
 
-            data[1].data.children.forEach(item => {
+            res.data[1].data.children.forEach(item => {
                 comments.push({
                     "body": item.data.body_html,
                     "author": item.data.author,
@@ -295,6 +317,11 @@ const makeModal = (permalink, index) => {
                 </div>`
             )
 
+            if(comments.length === 0) {
+                comments_container.insertAdjacentHTML('beforeend',
+                `<div class="comments">No comments</div>`
+            )}
+            else {
             comments.forEach(item => {
                 comments_container.insertAdjacentHTML('beforeend',
                 `<div class="comments">
@@ -309,7 +336,8 @@ const makeModal = (permalink, index) => {
                 </div>`
                 )
             })
-        })      
+        }
+        }).catch(err => console.error(err));      
 }
 
 modal_container.addEventListener("click", function(event) {
