@@ -18,7 +18,8 @@ a, a:visited {
 }
 
 
-@font-face {
+
+/* @font-face {
     font-family: "Circular Std Bold";
     src: url('CircularStd-Bold.otf') format("opentype");   
 }
@@ -32,7 +33,7 @@ a, a:visited {
 @font-face {
     font-family: 'Circular Std Light';
     src: url('Circular/CircularStd-Light.otf');
-}
+} */
 
 /* clears the 'X' from Internet Explorer */
 input[type=search]::-ms-clear {  display: none; width : 0; height: 0; }
@@ -45,22 +46,18 @@ input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration { display: none; }
   
   /* Works on Chrome, Edge, and Safari */
-  *::-webkit-scrollbar {
-    width: 12px;
-    overflow: overlay;
-  }
-  
-  *::-webkit-scrollbar-track {
-    background: transparent;
-    overflow: overlay;
-  }
-  
-  *::-webkit-scrollbar-thumb {
-    background-color: gray;
-    border-radius: 20px;
-    border: 3px solid gray;
-    overflow: overlay;
-} 
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: black; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #464646; 
+    border-radius: 50px;
+}
 
 .nav {
     top: 0;
@@ -174,7 +171,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     .nav__bars {
         display: block;
         padding-left: 10px;
-        padding-right: 15px;
+        padding-right: 20px;
     }
 }
 
@@ -319,7 +316,6 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 	border-radius: inherit;
 	overflow: hidden;
     border-radius: 16px;
-
 }
 
 
@@ -380,6 +376,10 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     flex-direction: row;
     font-size: 16px;
     color: rgb(130, 130, 130);
+    /* padding-top: 20px; */
+}
+
+.stats-con-pt20 {
     padding-top: 20px;
 }
 
