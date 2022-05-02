@@ -15,7 +15,7 @@ const dummycontainer = document.querySelector('.dummycontainer')
 const dummysection = document.querySelector('.dummysection')
 const subreddit__title = document.querySelector('.subreddit__title')
 let filter = ''
-let subreddit = 'ravens'
+let subreddit = 'mostbeautiful'
 let ireddit
 let vreddit
 let vthumb
@@ -39,10 +39,6 @@ search.addEventListener("keyup", function(e) {
     })
     if(searchWord !== '') {
         dummycontainer.classList.remove('dummyhide')
-        // newFilter.forEach((i) => {
-        //     dummysection.insertAdjacentHTML('beforeend', 
-        //     `<div onClick="changeSubreddit('${i}')">r/${i}</div>`)
-        // })
         if(newFilter.length === 0) dummycontainer.classList.add('dummyhide')
     } else {
         dummycontainer.classList.add('dummyhide')
@@ -119,9 +115,6 @@ const getSubredditInfo = () => {
         subreddit__title.innerHTML = "r/" + subredditInfo[0].subredditTitle
         
     }).catch(err => console.error(err));
-
-
-
 }
 
 const getPosts = () => {
@@ -139,11 +132,6 @@ const getPosts = () => {
             youtube = ''
             gallery = ''
             vthumb = ''
-            // if(item.data.domain === 'i.redd.it') {
-            //     if(item.data.preview !== undefined) {
-            //         ireddit = item.data.preview.images
-            //     }
-            // }
 
             if(item.data.domain === 'v.redd.it') {
                 if(!item.data.crosspost_parent && item.data.secure_media != null) {
@@ -164,20 +152,6 @@ const getPosts = () => {
             if(item.data.is_gallery) {
                 gallery = item.data.media_metadata               
             }
-
-            //For single images, you do not need responsive images. Prozilla uses the same image on desktop and mobile. 
-            //its just the media container changing size
-            //So for the gallery, you'll only need one size 
-            //Gallery you need to some how sort through 4 different objects to get to one image. Maybe a For In loop would be necessary 
-            
-
-            //For v.redd.it, you can get the fallback URL
-            //add audio seperately, and add custom controls 
-
-            //Link is just the URL
-
-            //You can get streamables, it gives an iframe, you'll need to add in the <> and remove slashes in the iframe, but it works well 
-            //Youtube is the same, an iframe just need to fix it up
 
             postsArray.push({
                 "title": item.data.title,
@@ -217,11 +191,6 @@ const getPosts = () => {
                     return `<img class='post__media2' src='${item.thumbnail}'>`
                 else return `<div class="displaynone"></div>`
             }
-
-            //You can get subreddit icons, banner, subcribers, recently online, etc very easily from ravens/about.json
-            //able to make the side menu and get subreddit icons for the posts 
-            //would need to make another fetch request
-            //wouldn't work for r/all or r/popular 
         
             posts.insertAdjacentHTML('beforeend', 
                 `<div class="post">
@@ -234,12 +203,13 @@ const getPosts = () => {
                         <div class="stickied ${(item.stickied ? "stickied__show" : "")}"><i title="Pinned by moderators" class="green fas fa-thumbtack"></i></div>
                     </div>
                     <div class="title">${item.title}</div>
-                    <div class="post__media__container">
-                        <div class=""post__media__inner__container>                         
-                            ${postMedia()}                          
-                        </div>
-                    </div>
-                    <div class="stats-con">
+                        ${(item.selftext) ? postMedia() :
+                            `<div class="post__media__container">
+                                <div class=""post__media__inner__container> 
+                                    ${postMedia()}                         
+                                    </div>
+                                </div>`}  
+                    ${(!item.selftext && item.domain !== 'twitter.com') ? `<div class="stats-con stats-con-pt20">` : `<div class="stats-con">`}
                         <div class="upvotes"><i class="far fa-heart"></i> ${item.upvotes}</div>
                         <a class="comments__num" onClick="makeModal('${item.permalink}', ${index})"><i class="far fa-comment"></i> ${item.comments} comments</a>
                     </div>
@@ -247,7 +217,6 @@ const getPosts = () => {
             )
         })
     }).catch(err => console.error(err));
-    // })
 }
 
 //to get postsData for comments, you would pass the index in the comments OnClick of postarrays
@@ -361,140 +330,3 @@ function closeModal() {
 getSubredditInfo()
 getPosts()
 
-
-
-
-//goes through all comments in comments array 
-//if there is a comment with a reply, then go through all those comments and display them 
-
-
-
-
-//should be an array of objects 
-//when youre going through the posts, if the posts end then stop the function 
-
-
-//post hint can tell you whether or not the post is selftext ('') link ('link') 
-//image ('image') or hosted:video ('hosted:video')
-//use this info to make the title a link or not 
-//make content under the title a selftext open tab, image, or video 
-
-//post hint doesnt work consistently with subreddits 
-//get if a post is a self post or not
-//use domain "i.redd.it" or "v.redd.it" to determine if reddit post
-//if not then it is an outside link
-
-//want to add self text functionality, which is you click a button to see entire self text
-
-
-//ok so getting an error with import/export the javascript variable between js pages
-//some reason the import is reading the entire javascript and not just whatever we 
-//imported. 
-
-//this problem could be solved with storing the variable in local host however 
-//im just going to take the easy route and just make the comment post in a modal 
-
-//so basically we want where we click the comments 
-//open the modal
-//make a function of makeModal() with the permalink as parameter 
-//fetch the post data (author, title, media, comments, upvotes)
-//display the comments and try to do the nesting lol 
-//when you click out of the modal, then clear all the data out 
-
-
-//conditionally go to the replies element
-            //if there are replies
-            //create a new array and loop through the replies.children.data array
-            //put the contents of them into the new array
-            //put that new array into the comments element
-            // comments.forEach(item => {
-            //     if(item.replies !== "" && item.replies !== undefined) {
-            //         item.replies.data.children.forEach(item => {
-            //             nestedReplies.push({
-
-            //             })
-            //         })
-            //         }
-                    
-            // comments.forEach(item => {
-            //     if(item.replies !== "" && item.replies !== undefined) {
-            //         nest = item.replies.data.children.forEach(item => {
-            //             nest1 = comments.map(v => ({...comments, replies2: item.data.body}))
-            //         })
-            //         // const nest = item.replies.data.children.forEach(item => {
-            //         //     console.log(item.data.body)
-            //         // })
-            //         // console.log(nest)
-            //     }
-            // })
-
-
-
-
-
-            
-            //this is sorting all the comments that have replies
-            
-                    // item.replies.data.children.forEach(item => {
-                    //    console.log(item)
-                    // })
-                    // data[1].data.children.forEach(item => {
-                    //     console.log(item.data.replies.data.children.data.body)
-                    // })
-                    
-             
-
-            // console.log(comments)
-
-
-
-
-            // comments.forEach(item => {
-//     if(item.replies !== "" && item.replies !== undefined) {
-//         item.replies.data.children.forEach(item => {
-//     }
-// })
-
-
-//conditionally go to the replies element
-//if there are replies create a new array and loop through the replies.children.data array
-//put the contents of them into the new array
-//put that new array into the comments element
-
-
-//things to do with this project still
-//make sidebar, style modal window, responsiveness (slide out menu), fine tuning styling
-//nested comments, OAUTH, media 
-
-//Other things 
-//Tidy up portfolio website, make line on the robinhood application, do something with 
-//weatherlites 
-//make the react version of this project 
-
-
-//Do the sidebar and styling of modal 
-//tidy up portfolio website 
-//quickly finish the weatherlites very simply
-//work on react version and OAUTH
-
-
-
-
-//Things to work on with portfolio
-//Arrows, page transitions
-
-//Reddit clone 
-//OAUTH, Authorization headers (CORS), NESTED COMMENTS, MEDIA
-
-
-//Try to make react version work as it is now 
-//OAUTH
-
-
-//Simple, no effect approach
-//CORS, responsive, style, media, comments 
-//
-
-
-//nodeJS cors, nested comments, picture media sizes, video playback, 
-//self text/ comments formatting, add more posts after scrolling down 
