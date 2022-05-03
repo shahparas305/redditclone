@@ -14,6 +14,7 @@ const comments_container = document.querySelector('.comments_container')
 const dummycontainer = document.querySelector('.dummycontainer')
 const dummysection = document.querySelector('.dummysection')
 const subreddit__title = document.querySelector('.subreddit__title')
+const loading = document.querySelector('.loading')
 let filter = ''
 let subreddit = 'mostbeautiful'
 let ireddit
@@ -118,12 +119,15 @@ const getSubredditInfo = () => {
 }
 
 const getPosts = () => {
+    loading.style.display = 'block'
     const data = axios.get("https://redditclone305.herokuapp.com/posts", {
         params: {
             subreddit: subreddit,
             filter: filter
         },
     }).then(res => {
+        loading.style.display = 'none'
+        
         console.log(res)
         res.data.data.children.forEach(item => {
 
