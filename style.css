@@ -264,6 +264,14 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     
 }
 
+.loading {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    margin-top: 300px;
+}
+
 .post__container {
     margin-bottom: 100px;
     margin-top: 30px;
