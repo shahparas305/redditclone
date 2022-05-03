@@ -30,8 +30,6 @@ let comments = []
 
 const array = ['ravens', 'nfl', 'wallstreetbets', 'webdev', 'popular', 'all']
 
-
-
 search.addEventListener("keyup", function(e) {
     e.preventDefault();
     dummysection.innerHTML = ''
@@ -224,8 +222,6 @@ const getPosts = () => {
     }).catch(err => console.error(err));
 }
 
-//to get postsData for comments, you would pass the index in the comments OnClick of postarrays
-
 const makeModal = (permalink, index) => {
     modal_container.classList.add('show')
     document.body.style.overflow = "hidden";
@@ -248,8 +244,6 @@ const makeModal = (permalink, index) => {
                     "stickied": item.data.stickied                   
                 })
             })
-
-            //BEGIN
 
             const commentsPostMedia = () => {
                 if(postsArray[index].is_self && postsArray[index].selftext != null) 
