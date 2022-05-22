@@ -10,7 +10,6 @@ body {
 
 html {
     overflow: -moz-scrollbars-vertical; 
-    overflow-y: scroll;
 }
 
 a, a:visited {
@@ -133,18 +132,36 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 }
 
 .dummycontainer {
+    position: fixed;
+    width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 50px;
-    margin-bottom: -50px;
+    z-index: 2;
+    margin-top: -20px;
 }
 
 .dummysection {
-    width: 700px;
-    background-color: white;
-    color: black;
+    /* font-family: 'Circular Std Light'; */
+    width: 46%;
+    margin-right: -150px;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    background-color: black;
+    color: white;
     z-index: 10;
-    position: absolute;
+    font-size: 18px;
+}
+
+.dummysection__search__item {
+    margin-bottom: 10px;
+}
+
+@media(max-width: 1100px) {
+    .dummysection {
+        width: 100%;
+        margin-right: 0;
+    }
 }
 
 .dummyhide {
@@ -178,21 +195,28 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .main {
     margin-top: 70px;
     max-width: 100%;
+    height: calc(100vh - 70px);
     display: flex;
     justify-content: center;
+    /* background-color: red; */
 }
 
 .wrapper {
     /* max-width: 70%; */
-    max-width: 1000px;
+    /* background-color: green; */
+    height: calc(100vh - 70px);
+    min-width: 1000px;
     display: grid;
     grid-template-columns: 65% 35%;
-    grid-gap: 30px;
+    gap: 30px;
 }
 
 .content__left {
     display: flex;
     flex-direction: column;
+    /* background-color: blue; */
+    max-width: 650px;
+    /* height: 650px; */
 }
 
 
@@ -260,8 +284,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
         margin-top: 10px;
         margin-bottom: 10px;
     }
-
-    
+ 
 }
 
 .loading {
@@ -324,6 +347,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 	border-radius: inherit;
 	overflow: hidden;
     border-radius: 16px;
+    color: red;
 }
 
 
@@ -509,6 +533,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     text-align: left;
 }
 
+
 .selftext {
     text-align: left;
     max-height: 75vh;
@@ -568,6 +593,15 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 }
 
 /* CONTENT RIGHT */
+.content__right {
+    /* background-color: yellow; */
+    max-width: 350px;
+}
+
+
+.content__right--c {
+    position: fixed;
+}
 
 .subreddit__container {
     background-color: #191919;
@@ -618,6 +652,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     .wrapper {
         display: block;
         max-width: 70%;
+        min-width: 0px;
         margin: 0;
         padding: 0;
     }
