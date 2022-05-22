@@ -28,17 +28,23 @@ let subredditIcon
 let postsArray = []
 let comments = []
 
-const array = ['ravens', 'nfl', 'wallstreetbets', 'webdev', 'popular', 'all']
+const subredditList = ['ravens', 'nfl', 'wallstreetbets', 'webdev', 'popular', 'all']
+
+
 
 search.addEventListener("keyup", function(e) {
     e.preventDefault();
     dummysection.innerHTML = ''
     const searchWord = e.target.value
-    const newFilter = array.filter((value) => {
+    const newFilter = subredditList.filter((value) => {
         return value.toLowerCase().includes(searchWord.toLowerCase())
     })
     if(searchWord !== '') {
         dummycontainer.classList.remove('dummyhide')
+        newFilter.forEach((i) => {
+            dummysection.insertAdjacentHTML('beforeend', 
+            `<div class="dummysection__search__item" onClick="changeSubreddit('${i}')">r/${i}</div>`)
+        })
         if(newFilter.length === 0) dummycontainer.classList.add('dummyhide')
     } else {
         dummycontainer.classList.add('dummyhide')
@@ -115,6 +121,9 @@ const getSubredditInfo = () => {
         subreddit__title.innerHTML = "r/" + subredditInfo[0].subredditTitle
         
     }).catch(err => console.error(err));
+
+
+
 }
 
 const getPosts = () => {
@@ -126,7 +135,7 @@ const getPosts = () => {
         },
     }).then(res => {
         loading.style.display = 'none'
-        
+
         console.log(res)
         res.data.data.children.forEach(item => {
 
@@ -135,6 +144,11 @@ const getPosts = () => {
             youtube = ''
             gallery = ''
             vthumb = ''
+            // if(item.data.domain === 'i.redd.it') {
+            //     if(item.data.preview !== undefined) {
+            //         ireddit = item.data.preview.images
+            //     }
+            // }
 
             if(item.data.domain === 'v.redd.it') {
                 if(!item.data.crosspost_parent && item.data.secure_media != null) {
@@ -155,6 +169,20 @@ const getPosts = () => {
             if(item.data.is_gallery) {
                 gallery = item.data.media_metadata               
             }
+
+            //For single images, you do not need responsive images. Prozilla uses the same image on desktop and mobile. 
+            //its just the media container changing size
+            //So for the gallery, you'll only need one size 
+            //Gallery you need to some how sort through 4 different objects to get to one image. Maybe a For In loop would be necessary 
+            
+
+            //For v.redd.it, you can get the fallback URL
+            //add audio seperately, and add custom controls 
+
+            //Link is just the URL
+
+            //You can get streamables, it gives an iframe, you'll need to add in the <> and remove slashes in the iframe, but it works well 
+            //Youtube is the same, an iframe just need to fix it up
 
             postsArray.push({
                 "title": item.data.title,
@@ -194,6 +222,11 @@ const getPosts = () => {
                     return `<img class='post__media2' src='${item.thumbnail}'>`
                 else return `<div class="displaynone"></div>`
             }
+
+            //You can get subreddit icons, banner, subcribers, recently online, etc very easily from ravens/about.json
+            //able to make the side menu and get subreddit icons for the posts 
+            //would need to make another fetch request
+            //wouldn't work for r/all or r/popular 
         
             posts.insertAdjacentHTML('beforeend', 
                 `<div class="post">
@@ -222,11 +255,13 @@ const getPosts = () => {
     }).catch(err => console.error(err));
 }
 
+//to get postsData for comments, you would pass the index in the comments OnClick of postarrays
+
 const makeModal = (permalink, index) => {
     modal_container.classList.add('show')
+    document.body.style.height = "auto"
     document.body.style.overflow = "hidden";
     modalLoading.style.display = 'block'
-
 
     const data = axios.get("https://redditclone305.herokuapp.com/comments", {
         params: {
@@ -244,6 +279,8 @@ const makeModal = (permalink, index) => {
                     "stickied": item.data.stickied                   
                 })
             })
+
+            //BEGIN
 
             const commentsPostMedia = () => {
                 if(postsArray[index].is_self && postsArray[index].selftext != null) 
@@ -331,4 +368,3 @@ function closeModal() {
 
 getSubredditInfo()
 getPosts()
-
